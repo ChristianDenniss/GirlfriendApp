@@ -12,11 +12,17 @@ export default function ModuleViewScreen() {
   const { id } = useLocalSearchParams();
   const { modules, addItemToModule, toggleItemComplete, clearCompletedItems, deleteAllItems } = useAppState();
   const module = modules.find(m => m.id === id);
+  
+  // Ensure module has items array
+  const moduleWithItems = module ? {
+    ...module,
+    items: module.items || []
+  } : null;
   const [newItemText, setNewItemText] = useState('');
   const [timeframeText, setTimeframeText] = useState('');
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
-  if (!module) {
+  if (!moduleWithItems) {
     return (
       <ThemedView style={styles.container}>
         <ThemedText type="title">Module Not Found</ThemedText>
@@ -26,11 +32,11 @@ export default function ModuleViewScreen() {
 
   const handleAddItem = () => {
     if (newItemText.trim()) {
-      if (module.type === 'bucketlist') {
-        addItemToModule(module.id, newItemText.trim(), timeframeText.trim());
+      if (moduleWithItems.type === 'bucketlist') {
+        addItemToModule(moduleWithItems.id, newItemText.trim(), timeframeText.trim());
         setTimeframeText('');
       } else {
-        addItemToModule(module.id, newItemText.trim());
+        addItemToModule(moduleWithItems.id, newItemText.trim());
       }
       setNewItemText('');
       setTimeframeText('');
@@ -38,15 +44,15 @@ export default function ModuleViewScreen() {
   };
 
   const handleToggleItem = (itemId: string) => {
-    if (module.type !== 'bucketlist') {
-      toggleItemComplete(module.id, itemId);
+    if (moduleWithItems.type !== 'bucketlist') {
+      toggleItemComplete(moduleWithItems.id, itemId);
     }
   };
 
   const handleClearCompleted = () => {
     console.log('Clear button pressed');
-    if (module.type !== 'bucketlist') {
-      clearCompletedItems(module.id);
+    if (moduleWithItems.type !== 'bucketlist') {
+      clearCompletedItems(moduleWithItems.id);
     }
     setNewItemText('');
     setTimeframeText('');
@@ -57,7 +63,7 @@ export default function ModuleViewScreen() {
   };
 
   const confirmDeleteAll = () => {
-    deleteAllItems(module.id);
+    deleteAllItems(moduleWithItems.id);
     setShowDeleteConfirm(false);
   };
 
@@ -67,11 +73,11 @@ export default function ModuleViewScreen() {
 
   return (
     <ThemedView style={styles.container}>
-      <ThemedText type="title" style={styles.title}>{module.name}</ThemedText>
+      <ThemedText type="title" style={styles.title}>{moduleWithItems.name}</ThemedText>
       <FlatList
-        data={module.items}
+        data={moduleWithItems.items}
         renderItem={({ item }) => (
-          <AnimatedListItem item={item} onToggle={handleToggleItem} moduleType={module.type} />
+          <AnimatedListItem item={item} onToggle={handleToggleItem} moduleType={moduleWithItems.type} />
         )}
         keyExtractor={(item) => item.id}
         contentContainerStyle={styles.list}
@@ -84,7 +90,7 @@ export default function ModuleViewScreen() {
           value={newItemText}
           onChangeText={setNewItemText}
         />
-        {module.type === 'bucketlist' && (
+        {moduleWithItems.type === 'bucketlist' && (
           <TextInput
             style={styles.input}
             placeholder="Timeframe (e.g., 'Next year')"
@@ -98,7 +104,7 @@ export default function ModuleViewScreen() {
         </Pressable>
       </ThemedView>
       <View style={styles.bottomButtonsContainer}>
-        {module.type !== 'bucketlist' && (
+        {moduleWithItems.type !== 'bucketlist' && (
           <Pressable onPress={handleClearCompleted} style={styles.clearButton}>
             <ThemedText style={styles.clearButtonText}>Clear Finished Items</ThemedText>
           </Pressable>

@@ -1,39 +1,70 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { ImageBackground, Animated, StyleSheet, Dimensions, ActivityIndicator, View, PanResponder } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
+
 const isoMap = require('../../assets/images/pixelArt/isometric_map_320x400.png');
 
 const sprites = {
-  forward: require('../../assets/images/pixelArt/maddy/pixelMforward.png'),
-  forwardStep1: require('../../assets/images/pixelArt/maddy/pixelMforwardStep1.png'),
-  forwardStep2: require('../../assets/images/pixelArt/maddy/pixelMforwardStep2.png'),
-  backward: require('../../assets/images/pixelArt/maddy/pixelMbackwards.png'),
-  backwardStep1: require('../../assets/images/pixelArt/maddy/pixelMbackwardsStep1.png'),
-  backwardStep2: require('../../assets/images/pixelArt/maddy/pixelMbackwardsStep2.png'),
-  left: require('../../assets/images/pixelArt/maddy/pixelMleft.png'),
-  leftStep1: require('../../assets/images/pixelArt/maddy/pixelMleftStep1.png'),
-  leftStep2: require('../../assets/images/pixelArt/maddy/pixelMleftStep2.png'),
-  right: require('../../assets/images/pixelArt/maddy/pixelMright.png'),
-  rightStep1: require('../../assets/images/pixelArt/maddy/pixelMrightStep1.png'),
-  rightStep2: require('../../assets/images/pixelArt/maddy/pixelMrightStep2.png'),
-  leftBackward: require('../../assets/images/pixelArt/maddy/pixelMleftBackward.png'),
-  leftBackwardStep1: require('../../assets/images/pixelArt/maddy/pixelMleftBackwardStep1.png'),
-  leftBackwardStep2: require('../../assets/images/pixelArt/maddy/pixelMleftBackwardStep2.png'),
-  rightBackward: require('../../assets/images/pixelArt/maddy/pixelMrightBackward.png'),
-  rightBackwardStep1: require('../../assets/images/pixelArt/maddy/pixelMrightBackwardStep1.png'),
-  rightBackwardStep2: require('../../assets/images/pixelArt/maddy/pixelMrightBackwardStep2.png'),
-  sideRight: require('../../assets/images/pixelArt/maddy/pixelMsideRight.png'),
-  sideRightStep1: require('../../assets/images/pixelArt/maddy/pixelMsideRightStep1.png'),
-  sideRightStep2: require('../../assets/images/pixelArt/maddy/pixelMsideRightStep2.png'),
-  sideLeft: require('../../assets/images/pixelArt/maddy/pixelMsideLeft.png'),
-  sideLeftStep1: require('../../assets/images/pixelArt/maddy/pixelMsideLeftStep1.png'),
-  sideLeftStep2: require('../../assets/images/pixelArt/maddy/pixelMsideLeftStep2.png'),
-  floating: require('../../assets/images/pixelArt/maddy/pixelMfloating.png'),
-  sleep1: require('../../assets/images/pixelArt/maddy/pixelMSleep1.png'),
-  sleep2: require('../../assets/images/pixelArt/maddy/pixelMSleep2.png'),
-  sleep3: require('../../assets/images/pixelArt/maddy/pixelMSleep3.png'),
-  sleep4: require('../../assets/images/pixelArt/maddy/pixelMSleep4.png'),
+  // Maddy (pixelM)
+  pixelMforward: require('../../assets/images/pixelArt/maddy/pixelMforward.png'),
+  pixelMforwardStep1: require('../../assets/images/pixelArt/maddy/pixelMforwardStep1.png'),
+  pixelMforwardStep2: require('../../assets/images/pixelArt/maddy/pixelMforwardStep2.png'),
+  pixelMbackward: require('../../assets/images/pixelArt/maddy/pixelMbackwards.png'),
+  pixelMbackwardStep1: require('../../assets/images/pixelArt/maddy/pixelMbackwardsStep1.png'),
+  pixelMbackwardStep2: require('../../assets/images/pixelArt/maddy/pixelMbackwardsStep2.png'),
+  pixelMleft: require('../../assets/images/pixelArt/maddy/pixelMleft.png'),
+  pixelMleftStep1: require('../../assets/images/pixelArt/maddy/pixelMleftStep1.png'),
+  pixelMleftStep2: require('../../assets/images/pixelArt/maddy/pixelMleftStep2.png'),
+  pixelMright: require('../../assets/images/pixelArt/maddy/pixelMright.png'),
+  pixelMrightStep1: require('../../assets/images/pixelArt/maddy/pixelMrightStep1.png'),
+  pixelMrightStep2: require('../../assets/images/pixelArt/maddy/pixelMrightStep2.png'),
+  pixelMleftBackward: require('../../assets/images/pixelArt/maddy/pixelMleftBackward.png'),
+  pixelMleftBackwardStep1: require('../../assets/images/pixelArt/maddy/pixelMleftBackwardStep1.png'),
+  pixelMleftBackwardStep2: require('../../assets/images/pixelArt/maddy/pixelMleftBackwardStep2.png'),
+  pixelMrightBackward: require('../../assets/images/pixelArt/maddy/pixelMrightBackward.png'),
+  pixelMrightBackwardStep1: require('../../assets/images/pixelArt/maddy/pixelMrightBackwardStep1.png'),
+  pixelMrightBackwardStep2: require('../../assets/images/pixelArt/maddy/pixelMrightBackwardStep2.png'),
+  pixelMsideRight: require('../../assets/images/pixelArt/maddy/pixelMsideRight.png'),
+  pixelMsideRightStep1: require('../../assets/images/pixelArt/maddy/pixelMsideRightStep1.png'),
+  pixelMsideRightStep2: require('../../assets/images/pixelArt/maddy/pixelMsideRightStep2.png'),
+  pixelMsideLeft: require('../../assets/images/pixelArt/maddy/pixelMsideLeft.png'),
+  pixelMsideLeftStep1: require('../../assets/images/pixelArt/maddy/pixelMsideLeftStep1.png'),
+  pixelMsideLeftStep2: require('../../assets/images/pixelArt/maddy/pixelMsideLeftStep2.png'),
+  pixelMfloating: require('../../assets/images/pixelArt/maddy/pixelMfloating.png'),
+  pixelMsleep1: require('../../assets/images/pixelArt/maddy/pixelMSleep1.png'),
+  pixelMsleep2: require('../../assets/images/pixelArt/maddy/pixelMSleep2.png'),
+  pixelMsleep3: require('../../assets/images/pixelArt/maddy/pixelMSleep3.png'),
+  pixelMsleep4: require('../../assets/images/pixelArt/maddy/pixelMSleep4.png'),
+
+  // C (pixelC)
+  pixelCforward: require('../../assets/images/pixelArt/maddy/pixelCforwards.png'),
+  pixelCforwardStep1: require('../../assets/images/pixelArt/maddy/pixelCforwardsStep1.png'),
+  pixelCforwardStep2: require('../../assets/images/pixelArt/maddy/pixelCforwardsStep2.png'),
+  pixelCbackward: require('../../assets/images/pixelArt/maddy/pixelCbackwards.png'),
+  pixelCbackwardStep1: require('../../assets/images/pixelArt/maddy/pixelCbackwardsStep1.png'),
+  pixelCbackwardStep2: require('../../assets/images/pixelArt/maddy/pixelCbackwardsStep2.png'),
+  pixelCsideLeft: require('../../assets/images/pixelArt/maddy/pixelCsideLeft.png'),
+  pixelCsideLeftStep1: require('../../assets/images/pixelArt/maddy/pixelCsideLeftStep1.png'),
+  pixelCsideLeftStep2: require('../../assets/images/pixelArt/maddy/pixelCsideLeftStep2.png'),
+  pixelCsideRight: require('../../assets/images/pixelArt/maddy/pixelCsideRight.png'),
+  pixelCsideRightStep1: require('../../assets/images/pixelArt/maddy/pixelCsideRightStep1.png'),
+  pixelCsideRightStep2: require('../../assets/images/pixelArt/maddy/pixelCsideRightStep2.png'),
+  pixelCfloating: require('../../assets/images/pixelArt/maddy/pixelCfloating.png'),
+  pixelCbasketball1: require('../../assets/images/pixelArt/maddy/pixelCbasketball1.png'),
+  pixelCbasketball2: require('../../assets/images/pixelArt/maddy/pixelCbasketball2.png'),
+  pixelCbasketball3: require('../../assets/images/pixelArt/maddy/pixelCbasketball3.png'),
+  pixelCbasketball4: require('../../assets/images/pixelArt/maddy/pixelCbasketball4.png'),
+  pixelCbasketball5: require('../../assets/images/pixelArt/maddy/pixelCbasketball5.png'),
+  pixelCbasketball6: require('../../assets/images/pixelArt/maddy/pixelCbasketball6.png'),
+  pixelCbasketball7: require('../../assets/images/pixelArt/maddy/pixelCbasketball7.png'),
+  pixelCbasketball8: require('../../assets/images/pixelArt/maddy/pixelCbasketball8.png'),
+  pixelCbasketball9: require('../../assets/images/pixelArt/maddy/pixelCbasketball9.png'),
+  pixelCbasketball10: require('../../assets/images/pixelArt/maddy/pixelCbasketball10.png'),
+  pixelCbasketball11: require('../../assets/images/pixelArt/maddy/pixelCbasketball11.png'),
+  pixelCbasketball12: require('../../assets/images/pixelArt/maddy/pixelCbasketball12.png'),
 };
+
+type SpriteKey = keyof typeof sprites;
 
 const directions = [
   'forward', 'backward', 'left', 'right',
@@ -41,157 +72,95 @@ const directions = [
 ] as const;
 type Direction = typeof directions[number];
 
+interface SpriteConfig {
+  prefix: string;
+  floating: SpriteKey;
+  specialActionName: string;
+  specialActionFrames: number;
+  hasDiagonal: boolean;
+  forward?: SpriteKey;
+  forwardStep1?: SpriteKey;
+  forwardStep2?: SpriteKey;
+  backward?: SpriteKey;
+  backwardStep1?: SpriteKey;
+  backwardStep2?: SpriteKey;
+}
+
 const { width, height } = Dimensions.get('window');
 const SPRITE_SIZE = 48;
 const BOUNDS = {
   minX: 20,
   maxX: width - SPRITE_SIZE - 20,
   minY: 100,
-  maxY: height - SPRITE_SIZE - 120, // leave space for tab bar
+  maxY: height - SPRITE_SIZE - 120,
 };
 
-const SPRITE_WALK_SPEED = 0.05; // pixels per millisecond (slower speed)
+const SPRITE_WALK_SPEED = 0.05;
 
-export default function HomeScreen() {
+const useSpriteAnimation = (config: SpriteConfig) => {
   const [direction, setDirection] = useState<Direction>('forward');
   const [walking, setWalking] = useState(false);
   const [step, setStep] = useState(0);
   const [pos, setPos] = useState({ x: width / 2 - SPRITE_SIZE / 2, y: height / 2 - SPRITE_SIZE / 2 });
   const anim = useRef(new Animated.ValueXY(pos)).current;
-  const [imageLoaded, setImageLoaded] = useState(false);
   const [dragging, setDragging] = useState(false);
   const [isFrozen, setIsFrozen] = useState(false);
-  const [sleeping, setSleeping] = useState(false);
-  const [sleepStep, setSleepStep] = useState(0);
+  const [specialAction, setSpecialAction] = useState(false);
+  const [specialActionStep, setSpecialActionStep] = useState(0);
   const dragOffset = useRef({ x: 0, y: 0 }).current;
-  const [isInitialized, setIsInitialized] = useState(false);
 
-  // Animation frame loop for walking and sleeping
   useEffect(() => {
-    if (isFrozen) return; // Pause animation while frozen
+    if (isFrozen) return;
     let frameInterval: any;
-    if (sleeping) {
+    if (specialAction) {
       frameInterval = setInterval(() => {
-        setSleepStep((prev) => (prev === 3 ? 0 : prev + 1));
-      }, 500); // Slower sleep animation
+        setSpecialActionStep((prev) => (prev === config.specialActionFrames - 1 ? 0 : prev + 1));
+      }, 100);
     } else if (walking) {
       frameInterval = setInterval(() => {
         setStep((prev) => (prev === 0 ? 1 : 0));
-      }, 200); // Faster walking animation
+      }, 200);
     } else {
       setStep(0);
     }
     return () => frameInterval && clearInterval(frameInterval);
-  }, [walking, sleeping, isFrozen]);
+  }, [walking, specialAction, isFrozen, config.specialActionFrames]);
 
-  // Reset sleep step when waking up
   useEffect(() => {
-    if (!sleeping) {
-      setSleepStep(0);
+    if (!specialAction) {
+      setSpecialActionStep(0);
     }
-  }, [sleeping]);
+  }, [specialAction]);
 
-  // Reset step state when transitioning from sleeping to walking
   useEffect(() => {
-    if (walking && !sleeping) {
-      setStep(0); // Reset step to start walking animation from frame 1
+    if (walking && !specialAction) {
+      setStep(0);
     }
-  }, [walking, sleeping]);
+  }, [walking, specialAction]);
 
-  // Initialize the home screen with a brief delay for smooth transitions
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsInitialized(true);
-    }, 200);
-    return () => clearTimeout(timer);
-  }, []);
-
-  // PanResponder for dragging
-  const panResponder = useRef(
-    PanResponder.create({
-      onStartShouldSetPanResponder: (evt, gestureState) => {
-        const { pageX, pageY } = evt.nativeEvent;
-        const spriteX = (anim.x as any)._value;
-        const spriteY = (anim.y as any)._value;
-        
-        // Check if touch is within sprite bounds
-        if (
-          pageX >= spriteX &&
-          pageX <= spriteX + SPRITE_SIZE &&
-          pageY >= spriteY &&
-          pageY <= spriteY + SPRITE_SIZE
-        ) {
-          return true;
-        }
-        return false;
-      },
-      onPanResponderGrant: (evt, gestureState) => {
-        setDragging(true);
-        setIsFrozen(true);
-        dragOffset.x = gestureState.x0 - (anim.x as any)._value;
-        dragOffset.y = gestureState.y0 - (anim.y as any)._value;
-      },
-      onPanResponderMove: (evt, gestureState) => {
-        const newX = gestureState.moveX - dragOffset.x;
-        const newY = gestureState.moveY - dragOffset.y;
-        anim.setValue({ x: newX, y: newY });
-      },
-      onPanResponderRelease: (evt, gestureState) => {
-        setDragging(false);
-        const currentX = (anim.x as any)._value;
-        const currentY = (anim.y as any)._value;
-        const maxY = BOUNDS.maxY;
-        const fallY = Math.min(currentY + 60, maxY);
-        // Animate fall
-        Animated.timing(anim, {
-          toValue: { x: currentX, y: fallY },
-          duration: 400,
-          useNativeDriver: false,
-        }).start(() => {
-          setPos({ x: currentX, y: fallY });
-          setTimeout(() => {
-            setIsFrozen(false); // Unfreeze after pause
-          }, 1000);
-        });
-      },
-      onPanResponderTerminate: () => {
-        setDragging(false);
-        setIsFrozen(false);
-      },
-    })
-  ).current;
-
-  // Random action script
-  useEffect(() => {
-    if (isFrozen || sleeping) return; // Pause all movement and animation while frozen or sleeping
+    if (isFrozen || specialAction) return;
     let timeout: any;
 
     const doAction = () => {
-      // Randomly decide to walk, idle, or sleep
       const actionRoll = Math.random();
 
-      if (actionRoll > 0.95) { // 5% chance to sleep
+      if (actionRoll > 0.95) {
         setWalking(false);
-        // Stop the random action script first by setting sleeping to true
-        setSleeping(true);
-        // The effect will re-run and pause the script
-        // Sleep for 10 seconds, then resume
+        setSpecialAction(true);
         setTimeout(() => {
-          setSleeping(false);
-          // The effect will re-run and resume normal actions
+          setSpecialAction(false);
         }, 10000);
-        return; // Exit early to prevent scheduling more actions
-      } else if (actionRoll > 0.4) { // 58% chance to walk
+        return;
+      } else if (actionRoll > 0.4) {
         const dir = directions[Math.floor(Math.random() * directions.length)];
         setDirection(dir);
         setWalking(true);
-        setSleeping(false);
-        console.log(`Action: Walking, Direction: ${dir}`);
+        setSpecialAction(false);
 
-        const dist = 60 + Math.random() * 30; // Pick a random distance (60-90px)
-
+        const dist = 60 + Math.random() * 30;
         let dx = 0, dy = 0;
-        let chosenDirection: Direction = dir; // Store the randomly chosen direction
+        let chosenDirection: Direction = dir;
 
         switch (chosenDirection) {
           case 'forward': dy = dist; break;
@@ -204,7 +173,6 @@ export default function HomeScreen() {
           case 'sideLeft': dx = -dist; break;
         }
 
-        // Re-evaluate direction based on actual dx and dy to ensure consistency
         if (dx > 0 && dy > 0) setDirection('right');
         else if (dx < 0 && dy > 0) setDirection('left');
         else if (dx > 0 && dy < 0) setDirection('rightBackward');
@@ -213,62 +181,190 @@ export default function HomeScreen() {
         else if (dx === 0 && dy < 0) setDirection('backward');
         else if (dx > 0 && dy === 0) setDirection('sideRight');
         else if (dx < 0 && dy === 0) setDirection('sideLeft');
-        else setDirection(chosenDirection); // Fallback if no specific match
+        else setDirection(chosenDirection);
 
         const newX = Math.max(BOUNDS.minX, Math.min(BOUNDS.maxX, pos.x + dx));
         const newY = Math.max(BOUNDS.minY, Math.min(BOUNDS.maxY, pos.y + dy));
         const duration = dist / SPRITE_WALK_SPEED;
-        console.log(`Moving ${dir}: from (${pos.x.toFixed(0)}, ${pos.y.toFixed(0)}) to (${newX.toFixed(0)}, ${newY.toFixed(0)}), dist=${dist.toFixed(0)}, duration=${duration.toFixed(0)}`);
 
         Animated.timing(anim, {
           toValue: { x: newX, y: newY },
-          duration: duration, // Slower movement for better animation visibility
+          duration: duration,
           useNativeDriver: false,
         }).start(() => {
-          setPos({ x: newX, y: newY }); // Update pos state after animation completes
+          setPos({ x: newX, y: newY });
           setWalking(false);
-          // Moderate pause after walking (1-2.5 seconds)
           timeout = setTimeout(doAction, 1000 + Math.random() * 1500);
         });
-      } else { // 40% chance to idle
+      } else {
         setWalking(false);
-        setSleeping(false);
-        console.log(`Action: Idling`);
-        // Moderate pause when idling (1.5-3 seconds)
+        setSpecialAction(false);
         timeout = setTimeout(doAction, 1500 + Math.random() * 1500);
       }
     };
 
-    // Initial delay before first action (0.5-1.5 seconds)
     timeout = setTimeout(doAction, 500 + Math.random() * 1000);
-
     return () => clearTimeout(timeout);
-  }, [isFrozen, sleeping]); // Re-run if isFrozen or sleeping changes
+  }, [isFrozen, specialAction, pos.x, pos.y]);
 
-  // Pick correct sprite
-  let sprite;
+  let sprite: any;
   if (dragging) {
-    sprite = sprites.floating;
-  } else if (sleeping) {
-    // Only show sleep frames when actually sleeping
-    const sleepFrame = sleepStep + 1;
-    sprite = sprites[`sleep${sleepFrame}` as keyof typeof sprites];
+    sprite = sprites[config.floating];
+  } else if (specialAction) {
+    const specialActionFrame = specialActionStep + 1;
+    const spriteKey = `${config.specialActionName}${specialActionFrame}` as SpriteKey;
+    sprite = sprites[spriteKey];
   } else if (walking) {
-    if (direction === 'forward') sprite = step === 0 ? sprites.forwardStep1 : sprites.forwardStep2;
-    else if (direction === 'backward') sprite = step === 0 ? sprites.backwardStep1 : sprites.backwardStep2;
-    else if (direction === 'sideLeft') sprite = step === 0 ? sprites.sideLeftStep1 : sprites.sideLeftStep2;
-    else if (direction === 'sideRight') sprite = step === 0 ? sprites.sideRightStep1 : sprites.sideRightStep2;
-    else if (direction === 'left') sprite = step === 0 ? sprites.leftStep1 : sprites.leftStep2;
-    else if (direction === 'right') sprite = step === 0 ? sprites.rightStep1 : sprites.rightStep2;
-    else if (direction === 'leftBackward') sprite = step === 0 ? sprites.leftBackwardStep1 : sprites.leftBackwardStep2;
-    else if (direction === 'rightBackward') sprite = step === 0 ? sprites.rightBackwardStep1 : sprites.rightBackwardStep2;
-    else sprite = sprites[direction]; // Use base sprite for directions without step animations
+    const isUp = direction === 'leftBackward' || direction === 'rightBackward' || direction === 'backward';
+    const isDown = direction === 'left' || direction === 'right' || direction === 'forward';
+    if (!config.hasDiagonal && (isUp || isDown)) {
+        if (isUp) {
+            sprite = step === 0 ? sprites[config.backwardStep1!] : sprites[config.backwardStep2!];
+        } else {
+            sprite = step === 0 ? sprites[config.forwardStep1!] : sprites[config.forwardStep2!];
+        }
+    } else {
+        const step1Key = `${config.prefix}${direction}Step1` as SpriteKey;
+        const step2Key = `${config.prefix}${direction}Step2` as SpriteKey;
+        sprite = step === 0 ? sprites[step1Key] : sprites[step2Key];
+    }
   } else {
-    sprite = sprites[direction];
+    const isUp = direction === 'leftBackward' || direction === 'rightBackward' || direction === 'backward';
+    const isDown = direction === 'left' || direction === 'right' || direction === 'forward';
+    if (!config.hasDiagonal && (isUp || isDown)) {
+        if (isUp) {
+            sprite = sprites[config.backward!];
+        } else {
+            sprite = sprites[config.forward!];
+        }
+    } else {
+        const spriteKey = `${config.prefix}${direction}` as SpriteKey;
+        sprite = sprites[spriteKey];
+    }
   }
-  console.log(`Sprite selection: direction=${direction}, walking=${walking}, step=${step}, dragging=${dragging}, sleeping=${sleeping}, chosenSprite=${sprite ? sprite.toString().split('/').pop() : 'undefined'}`);
 
-  // Show loading state while initializing
+  return {
+    anim,
+    sprite,
+    setDragging,
+    setIsFrozen,
+    dragOffset,
+    pos,
+    setPos,
+  };
+};
+
+const pixelMConfig: SpriteConfig = {
+  prefix: 'pixelM',
+  floating: 'pixelMfloating',
+  specialActionName: 'pixelMsleep',
+  specialActionFrames: 4,
+  hasDiagonal: true,
+  forwardStep1: 'pixelMforwardStep1',
+  forwardStep2: 'pixelMforwardStep2',
+};
+
+const pixelCConfig: SpriteConfig = {
+    prefix: 'pixelC',
+    floating: 'pixelCfloating',
+    specialActionName: 'pixelCbasketball',
+    specialActionFrames: 12,
+    hasDiagonal: false,
+    forward: 'pixelCforward',
+    forwardStep1: 'pixelCforwardStep1',
+    forwardStep2: 'pixelCforwardStep2',
+    backward: 'pixelCbackward',
+    backwardStep1: 'pixelCbackwardStep1',
+    backwardStep2: 'pixelCbackwardStep2',
+  };
+
+export default function HomeScreen() {
+  const [imageLoaded, setImageLoaded] = useState(false);
+  const [isInitialized, setIsInitialized] = useState(false);
+  const maddy = useSpriteAnimation(pixelMConfig);
+  const c = useSpriteAnimation(pixelCConfig);
+  const [activeSprite, setActiveSprite] = useState<any>(null);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsInitialized(true);
+    }, 200);
+    return () => clearTimeout(timer);
+  }, []);
+
+  const activeSpriteRef = useRef<any>(null);
+
+  const panResponder = useRef(
+    PanResponder.create({
+      onStartShouldSetPanResponder: (evt, gestureState) => {
+        const { pageX, pageY } = evt.nativeEvent;
+        const maddyX = (maddy.anim.x as any)._value;
+        const maddyY = (maddy.anim.y as any)._value;
+        const cX = (c.anim.x as any)._value;
+        const cY = (c.anim.y as any)._value;
+
+        if (
+          pageX >= maddyX && pageX <= maddyX + SPRITE_SIZE &&
+          pageY >= maddyY && pageY <= maddyY + SPRITE_SIZE
+        ) {
+          activeSpriteRef.current = maddy;
+          return true;
+        }
+        if (
+          pageX >= cX && pageX <= cX + SPRITE_SIZE &&
+          pageY >= cY && pageY <= cY + SPRITE_SIZE
+        ) {
+          activeSpriteRef.current = c;
+          return true;
+        }
+        return false;
+      },
+      onPanResponderGrant: (evt, gestureState) => {
+        if (activeSpriteRef.current) {
+          activeSpriteRef.current.setDragging(true);
+          activeSpriteRef.current.setIsFrozen(true);
+          activeSpriteRef.current.dragOffset.x = gestureState.x0 - (activeSpriteRef.current.anim.x as any)._value;
+          activeSpriteRef.current.dragOffset.y = gestureState.y0 - (activeSpriteRef.current.anim.y as any)._value;
+        }
+      },
+      onPanResponderMove: (evt, gestureState) => {
+        if (activeSpriteRef.current) {
+          const newX = gestureState.moveX - activeSpriteRef.current.dragOffset.x;
+          const newY = gestureState.moveY - activeSpriteRef.current.dragOffset.y;
+          activeSpriteRef.current.anim.setValue({ x: newX, y: newY });
+        }
+      },
+      onPanResponderRelease: (evt, gestureState) => {
+        if (activeSpriteRef.current) {
+          const sprite = activeSpriteRef.current;
+          sprite.setDragging(false);
+          const currentX = (sprite.anim.x as any)._value;
+          const currentY = (sprite.anim.y as any)._value;
+          const maxY = BOUNDS.maxY;
+          const fallY = Math.min(currentY + 60, maxY);
+          Animated.timing(sprite.anim, {
+            toValue: { x: currentX, y: fallY },
+            duration: 400,
+            useNativeDriver: false,
+          }).start(() => {
+            sprite.setPos({ x: currentX, y: fallY });
+            setTimeout(() => {
+              sprite.setIsFrozen(false);
+            }, 1000);
+          });
+        }
+        activeSpriteRef.current = null;
+      },
+      onPanResponderTerminate: () => {
+        if (activeSpriteRef.current) {
+          activeSpriteRef.current.setDragging(false);
+          activeSpriteRef.current.setIsFrozen(false);
+        }
+        activeSpriteRef.current = null;
+      },
+    })
+  ).current;
+
   if (!isInitialized) {
     return (
       <View style={styles.loadingOverlay}>
@@ -292,10 +388,18 @@ export default function HomeScreen() {
           </View>
         )}
         <Animated.Image
-          source={sprite}
+          source={maddy.sprite}
           style={[
             styles.sprite,
-            { left: anim.x, top: anim.y },
+            { left: maddy.anim.x, top: maddy.anim.y },
+          ]}
+          resizeMode="contain"
+        />
+        <Animated.Image
+          source={c.sprite}
+          style={[
+            styles.sprite,
+            { left: c.anim.x, top: c.anim.y },
           ]}
           resizeMode="contain"
         />
@@ -314,4 +418,4 @@ const styles = StyleSheet.create({
     zIndex: 2,
   },
   sprite: { width: SPRITE_SIZE, height: SPRITE_SIZE, position: 'absolute', zIndex: 1 },
-}); 
+});

@@ -1,0 +1,39 @@
+{
+  "name": "maddy-app-backend",
+  "version": "1.0.0",
+  "description": "Backend for Maddy App",
+  "main": "server.ts",
+  "scripts": {
+    "start": "ts-node server.ts",
+    "dev": "nodemon --exec ts-node server.ts",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "typeorm": "typeorm-ts-node-commonjs",
+    "migration:generate": "npm run typeorm migration:generate -- -d src/data-source.ts",
+    "migration:run": "npm run typeorm migration:run -- -d src/data-source.ts",
+    "migration:revert": "npm run typeorm migration:revert -- -d src/data-source.ts",
+    "migration:show": "npm run typeorm migration:show -- -d src/data-source.ts",
+    "schema:sync": "npm run typeorm schema:sync -- -d src/data-source.ts",
+    "schema:drop": "npm run typeorm schema:drop -- -d src/data-source.ts",
+    "seed": "ts-node src/seeds/sample-data.ts"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "uuid": "^9.0.1",
+    "sqlite3": "^5.1.6",
+    "bcryptjs": "^2.4.3",
+    "jsonwebtoken": "^9.0.2",
+    "typeorm": "^0.3.20",
+    "reflect-metadata": "^0.2.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.3.3",
+    "@types/node": "^20.10.5"
+  },
+  "keywords": ["express", "api", "maddy-app"],
+  "author": "Christian Denniss",
+  "license": "MIT"
+} 

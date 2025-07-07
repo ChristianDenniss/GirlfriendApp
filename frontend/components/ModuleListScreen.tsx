@@ -1,6 +1,6 @@
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
-import { StyleSheet, FlatList, Pressable } from 'react-native';
+import { StyleSheet, FlatList, Pressable, ActivityIndicator, Alert } from 'react-native';
 import { ModuleCard } from './ModuleCard';
 import { useRouter } from 'expo-router';
 import { useAppState } from '@/state/AppState';
@@ -9,21 +9,14 @@ import { useState, useEffect } from 'react';
 
 export function ModuleListScreen({ title, type }: { title: string; type: 'groceries' | 'todo' | 'bucketlist' }) {
   const router = useRouter();
-  const { modules } = useAppState();
+  const { modules, loading, error, refreshModules } = useAppState();
   const [shouldAnimate, setShouldAnimate] = useState(false);
-  const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
-    // Reset states when type changes
     setShouldAnimate(false);
-    setIsVisible(false);
-    
-    // Delay before showing content and starting animation
     const timer = setTimeout(() => {
-      setIsVisible(true);
       setShouldAnimate(true);
-    }, 300); // Increased delay for smoother transition
-    
+    }, 300);
     return () => clearTimeout(timer);
   }, [type]);
 
@@ -32,18 +25,63 @@ export function ModuleListScreen({ title, type }: { title: string; type: 'grocer
   const getButtonIcon = () => {
     switch (type) {
       case 'todo':
-        return 'gavel'; // Gavel icon for lawyer/work
+        return 'gavel';
       case 'bucketlist':
-        return 'luggage'; // Luggage icon for travel/bucket list
+        return 'luggage';
       case 'groceries':
-        return 'restaurant'; // Restaurant icon for food
+        return 'restaurant';
       default:
         return 'add';
     }
   };
 
+  const handleCreateModule = async () => {
+    try {
+      await router.push({ pathname: '/create-module', params: { type } });
+    } catch (err) {
+      Alert.alert('Error', 'Failed to navigate to create module screen');
+    }
+  };
+
+  const handleRefresh = async () => {
+    try {
+      await refreshModules();
+    } catch (err) {
+      Alert.alert('Error', 'Failed to refresh modules');
+    }
+  };
+
+  // Show loading state
+  if (loading && modules.length === 0) {
+    return (
+      <ThemedView style={styles.container}>
+        <ThemedText type="title" style={styles.title}>{title}</ThemedText>
+        <ThemedView style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color="#66BB6A" />
+          <ThemedText style={styles.loadingText}>Loading modules...</ThemedText>
+        </ThemedView>
+      </ThemedView>
+    );
+  }
+
+  // Show error state
+  if (error && modules.length === 0) {
+    return (
+      <ThemedView style={styles.container}>
+        <ThemedText type="title" style={styles.title}>{title}</ThemedText>
+        <ThemedView style={styles.errorContainer}>
+          <MaterialIcons name="error" size={48} color="#FF69B4" />
+          <ThemedText style={styles.errorText}>{error}</ThemedText>
+          <Pressable style={styles.retryButton} onPress={handleRefresh}>
+            <ThemedText style={styles.retryButtonText}>Retry</ThemedText>
+          </Pressable>
+        </ThemedView>
+      </ThemedView>
+    );
+  }
+
   // Don't render anything until we're ready to animate
-  if (!isVisible) {
+  if (!shouldAnimate) {
     return (
       <ThemedView style={styles.container}>
         <ThemedText type="title" style={styles.title}>{title}</ThemedText>
@@ -54,15 +92,33 @@ export function ModuleListScreen({ title, type }: { title: string; type: 'grocer
   return (
     <ThemedView style={styles.container}>
       <ThemedText type="title" style={styles.title}>{title}</ThemedText>
+      
+      {error && (
+        <ThemedView style={styles.errorBanner}>
+          <ThemedText style={styles.errorBannerText}>{error}</ThemedText>
+        </ThemedView>
+      )}
+      
       <FlatList
         data={filteredModules}
         renderItem={({ item, index }) => <ModuleCard module={item} index={index} shouldAnimate={shouldAnimate} />}
         keyExtractor={(item) => item.id}
         contentContainerStyle={styles.list}
+        refreshing={loading}
+        onRefresh={handleRefresh}
+        ListEmptyComponent={
+          <ThemedView style={styles.emptyContainer}>
+            <MaterialIcons name="inbox" size={48} color="#66BB6A" />
+            <ThemedText style={styles.emptyText}>No {type} lists yet</ThemedText>
+            <ThemedText style={styles.emptySubtext}>Create your first list to get started!</ThemedText>
+          </ThemedView>
+        }
       />
+      
       <Pressable
-        onPress={() => router.push({ pathname: '/create-module', params: { type } })}
+        onPress={handleCreateModule}
         style={styles.createButton}
+        disabled={loading}
       >
         <MaterialIcons name={getButtonIcon()} size={24} color="white" style={styles.buttonIcon} />
         <ThemedText style={styles.buttonText}>Create New List</ThemedText>
@@ -99,6 +155,80 @@ const styles = StyleSheet.create({
   buttonText: {
     color: 'white',
     fontSize: 18,
+    fontFamily: 'FredokaRegular',
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  loadingText: {
+    marginTop: 16,
+    fontSize: 16,
+    color: 'white',
+    fontFamily: 'FredokaRegular',
+  },
+  errorContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+  errorText: {
+    marginTop: 16,
+    fontSize: 16,
+    color: '#66BB6A',
+    textAlign: 'center',
+    marginBottom: 20,
+    fontFamily: 'FredokaRegular',
+  },
+  retryButton: {
+    backgroundColor: '#66BB6A',
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    borderRadius: 8,
+  },
+  retryButtonText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  errorBanner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    backgroundColor: '#4B0082',
+    padding: 12,
+    borderRadius: 8,
+    marginBottom: 16,
+    borderWidth: 1,
+    borderColor: '#66BB6A',
+  },
+  errorBannerText: {
+    color: '#66BB6A',
+    fontSize: 14,
+    flex: 1,
+    marginRight: 8,
+    fontFamily: 'FredokaRegular',
+  },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingVertical: 60,
+  },
+  emptyText: {
+    fontSize: 18,
+    color: '#FF69B4',
+    marginTop: 16,
+    textTransform: 'capitalize',
+    fontFamily: 'FredokaRegular',
+  },
+  emptySubtext: {
+    fontSize: 14,
+    color: '#66BB6A',
+    marginTop: 8,
+    textAlign: 'center',
     fontFamily: 'FredokaRegular',
   },
 });
