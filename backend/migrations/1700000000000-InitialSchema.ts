@@ -4,15 +4,18 @@ export class InitialSchema1700000000000 implements MigrationInterface {
     name = 'InitialSchema1700000000000'
 
     public async up(queryRunner: QueryRunner): Promise<void> {
+        // Enable UUID extension for PostgreSQL
+        await queryRunner.query(`CREATE EXTENSION IF NOT EXISTS "uuid-ossp"`);
+
         await queryRunner.createTable(
             new Table({
                 name: "modules",
                 columns: [
                     {
                         name: "id",
-                        type: "varchar",
+                        type: "uuid",
                         isPrimary: true,
-                        length: "36"
+                        default: "uuid_generate_v4()"
                     },
                     {
                         name: "name",
@@ -48,12 +51,12 @@ export class InitialSchema1700000000000 implements MigrationInterface {
                     },
                     {
                         name: "createdAt",
-                        type: "datetime",
+                        type: "timestamp",
                         default: "CURRENT_TIMESTAMP"
                     },
                     {
                         name: "updatedAt",
-                        type: "datetime",
+                        type: "timestamp",
                         default: "CURRENT_TIMESTAMP"
                     }
                 ]
@@ -67,9 +70,9 @@ export class InitialSchema1700000000000 implements MigrationInterface {
                 columns: [
                     {
                         name: "id",
-                        type: "varchar",
+                        type: "uuid",
                         isPrimary: true,
-                        length: "36"
+                        default: "uuid_generate_v4()"
                     },
                     {
                         name: "title",
@@ -84,7 +87,7 @@ export class InitialSchema1700000000000 implements MigrationInterface {
                     {
                         name: "completed",
                         type: "boolean",
-                        default: "0"
+                        default: "false"
                     },
                     {
                         name: "priority",
@@ -99,22 +102,21 @@ export class InitialSchema1700000000000 implements MigrationInterface {
                     },
                     {
                         name: "dueDate",
-                        type: "datetime",
+                        type: "timestamp",
                         isNullable: true
                     },
                     {
                         name: "moduleId",
-                        type: "varchar",
-                        length: "36"
+                        type: "uuid"
                     },
                     {
                         name: "createdAt",
-                        type: "datetime",
+                        type: "timestamp",
                         default: "CURRENT_TIMESTAMP"
                     },
                     {
                         name: "updatedAt",
-                        type: "datetime",
+                        type: "timestamp",
                         default: "CURRENT_TIMESTAMP"
                     }
                 ]
@@ -136,5 +138,6 @@ export class InitialSchema1700000000000 implements MigrationInterface {
     public async down(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.dropTable("items");
         await queryRunner.dropTable("modules");
+        await queryRunner.query(`DROP EXTENSION IF EXISTS "uuid-ossp"`);
     }
 } 

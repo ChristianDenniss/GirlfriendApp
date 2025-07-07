@@ -21,10 +21,10 @@ export class Item {
   @Column({ type: "varchar", length: 50, nullable: true })
   category: string;
 
-  @Column({ type: "datetime", nullable: true })
+  @Column({ type: "timestamp", nullable: true })
   dueDate: Date;
 
-  @Column({ type: "varchar", length: 36 })
+  @Column({ type: "uuid" })
   moduleId: string;
 
   @CreateDateColumn()
