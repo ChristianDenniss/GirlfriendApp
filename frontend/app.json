@@ -11,7 +11,7 @@
     "ios": {
       "bundleIdentifier": "com.christiandennis.maddyapp",
       "buildNumber": "1",
-      "supportsTablet": true,
+      "supportsTablet": false,
       "infoPlist": {
         "NSAppTransportSecurity": {
           "NSAllowsArbitraryLoads": true
