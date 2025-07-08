@@ -2,6 +2,7 @@
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { StyleSheet, Pressable } from 'react-native';
+import { useEffect } from 'react';
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 import { MaterialIcons } from '@expo/vector-icons';
 
@@ -14,27 +15,31 @@ interface AnimatedListItemProps {
 export function AnimatedListItem({ item, onToggle, moduleType }: AnimatedListItemProps) {
   const checkmarkScale = useSharedValue(item.completed ? 1 : 0);
 
+  // Always sync animation state with prop state
+  useEffect(() => {
+    console.log('Item prop changed:', item.id, 'completed:', item.completed);
+    checkmarkScale.value = withTiming(item.completed ? 1 : 0, { duration: 200 });
+  }, [item.completed]);
+
   const animatedCheckmarkStyle = useAnimatedStyle(() => {
     return {
       transform: [{ scale: checkmarkScale.value }],
     };
   });
 
-  const handleToggle = () => {
-    if (onToggle && moduleType !== 'bucketlist') {
-      onToggle(item.id);
-      checkmarkScale.value = withTiming(item.completed ? 0 : 1, { duration: 200 });
+  const handleToggle = async () => {
+    if (onToggle) {
+      console.log('Toggling item:', item.id, 'Current completed:', item.completed);
+      await onToggle(item.id);
     }
   };
 
   return (
     <Pressable onPress={handleToggle}>
       <ThemedView style={styles.itemContainer}>
-        {moduleType !== 'bucketlist' && (
-          <Animated.View style={[styles.checkbox, animatedCheckmarkStyle]}>
-            {item.completed && <MaterialIcons name="check" size={20} color="white" />}
-          </Animated.View>
-        )}
+        <Animated.View style={[styles.checkbox, animatedCheckmarkStyle]}>
+          {item.completed && <MaterialIcons name="check" size={20} color="white" />}
+        </Animated.View>
         <ThemedText style={[styles.itemText, item.completed && styles.completedText]}>
           {item.text}
         </ThemedText>

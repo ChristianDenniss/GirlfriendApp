@@ -35,19 +35,32 @@ export function ModuleListScreen({ title, type }: { title: string; type: 'grocer
     }
   };
 
+  const getEmptyStateIcon = () => {
+    switch (type) {
+      case 'todo':
+        return 'favorite';
+      case 'bucketlist':
+        return 'sentiment-very-dissatisfied';
+      case 'groceries':
+        return 'eco';
+      default:
+        return 'inbox';
+    }
+  };
+
   const handleCreateModule = async () => {
     try {
       await router.push({ pathname: '/create-module', params: { type } });
-    } catch (err) {
-      Alert.alert('Error', 'Failed to navigate to create module screen');
+    } catch {
+      Alert.alert('Error', 'Failed to navigate to create module screen\nSorry pookie');
     }
   };
 
   const handleRefresh = async () => {
     try {
       await refreshModules();
-    } catch (err) {
-      Alert.alert('Error', 'Failed to refresh modules');
+    } catch {
+      Alert.alert('Error', 'Failed to refresh modules\nSorry pookie');
     }
   };
 
@@ -101,14 +114,14 @@ export function ModuleListScreen({ title, type }: { title: string; type: 'grocer
       
       <FlatList
         data={filteredModules}
-        renderItem={({ item, index }) => <ModuleCard module={item} index={index} shouldAnimate={shouldAnimate} />}
+        renderItem={({ item, index }) => <ModuleCard module={{ ...item, createdAt: String(item.createdAt) }} index={index} shouldAnimate={shouldAnimate} />}
         keyExtractor={(item) => item.id}
         contentContainerStyle={styles.list}
         refreshing={loading}
         onRefresh={handleRefresh}
         ListEmptyComponent={
           <ThemedView style={styles.emptyContainer}>
-            <MaterialIcons name="inbox" size={48} color="#66BB6A" />
+            <MaterialIcons name={getEmptyStateIcon()} size={48} color="#66BB6A" />
             <ThemedText style={styles.emptyText}>No {type} lists yet</ThemedText>
             <ThemedText style={styles.emptySubtext}>Create your first list to get started!</ThemedText>
           </ThemedView>

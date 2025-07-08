@@ -3,6 +3,7 @@ import { ImageBackground, Animated, StyleSheet, Dimensions, ActivityIndicator, V
 import { StatusBar } from 'expo-status-bar';
 
 const isoMap = require('../../assets/images/pixelArt/isometric_map_320x400.png');
+const maddyAppTitle = require('../../assets/images/pixelArt/maddyApp.png');
 
 const sprites = {
   // Maddy (pixelM)
@@ -205,7 +206,7 @@ const useSpriteAnimation = (config: SpriteConfig) => {
 
     timeout = setTimeout(doAction, 500 + Math.random() * 1000);
     return () => clearTimeout(timeout);
-  }, [isFrozen, specialAction, pos.x, pos.y]);
+  }, [isFrozen, specialAction, pos.x, pos.y, anim]);
 
   let sprite: any;
   if (dragging) {
@@ -283,14 +284,33 @@ export default function HomeScreen() {
   const [isInitialized, setIsInitialized] = useState(false);
   const maddy = useSpriteAnimation(pixelMConfig);
   const c = useSpriteAnimation(pixelCConfig);
-  const [activeSprite, setActiveSprite] = useState<any>(null);
+
+  // Floating title animation
+  const titleAnim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsInitialized(true);
-    }, 200);
-    return () => clearTimeout(timer);
+    // Remove the artificial delay for faster loading
+    setIsInitialized(true);
   }, []);
+
+  // Start floating animation for title
+  useEffect(() => {
+    const floatAnimation = () => {
+      Animated.sequence([
+        Animated.timing(titleAnim, {
+          toValue: 1,
+          duration: 2000,
+          useNativeDriver: true,
+        }),
+        Animated.timing(titleAnim, {
+          toValue: 0,
+          duration: 2000,
+          useNativeDriver: true,
+        }),
+      ]).start(() => floatAnimation());
+    };
+    floatAnimation();
+  }, [titleAnim]);
 
   const activeSpriteRef = useRef<any>(null);
 
@@ -387,6 +407,28 @@ export default function HomeScreen() {
             <ActivityIndicator size="large" color="#66BB6A" />
           </View>
         )}
+        
+        {/* Floating Title */}
+        <Animated.View
+          style={[
+            styles.floatingTitle,
+            {
+              transform: [{
+                translateY: titleAnim.interpolate({
+                  inputRange: [0, 1],
+                  outputRange: [0, -10], // Float up and down by 10 pixels
+                })
+              }]
+            }
+          ]}
+        >
+          <Animated.Image 
+            source={maddyAppTitle}
+            style={styles.titleImage}
+            resizeMode="contain"
+          />
+        </Animated.View>
+        
         <Animated.Image
           source={maddy.sprite}
           style={[
@@ -418,4 +460,25 @@ const styles = StyleSheet.create({
     zIndex: 2,
   },
   sprite: { width: SPRITE_SIZE, height: SPRITE_SIZE, position: 'absolute', zIndex: 1 },
+  floatingTitle: {
+    position: 'absolute',
+    top: 60,
+    left: 0,
+    right: 0,
+    alignItems: 'center',
+    zIndex: 10,
+  },
+  titleText: {
+    fontSize: 32,
+    fontWeight: 'bold',
+    color: '#66BB6A',
+    textShadowColor: 'rgba(0, 0, 0, 0.8)',
+    textShadowOffset: { width: 2, height: 2 },
+    textShadowRadius: 4,
+    fontFamily: 'FredokaRegular',
+  },
+  titleImage: {
+    width: 360,
+    height: 108,
+  },
 });

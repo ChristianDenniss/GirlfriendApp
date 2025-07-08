@@ -1,21 +1,20 @@
-import { useState, createContext, useContext, useEffect } from 'react';
-import { modulesApi, itemsApi } from '../services/api';
+import React, { createContext, useContext, useState, useEffect } from 'react';
+import { localDb, initDb } from '@/services/localDb';
+import { Module } from '@/types/Module';
+import { Item } from '@/types/Item';
 
-export interface Module {
-  id: string;
-  name: string;
-  createdAt: string;
-  type: 'groceries' | 'todo' | 'bucketlist';
-  items: { id: string; text: string; completed: boolean; timeframe?: string }[];
-  itemCount?: number;
+// Extended Module type for the app state
+interface AppModule extends Module {
+  items: Item[];
+  itemCount: number;
   completedCount?: number;
 }
 
-const AppStateContext = createContext<{ 
-  modules: Module[]; 
+const AppStateContext = createContext<{
+  modules: AppModule[]; 
   loading: boolean;
   error: string | null;
-  addModule: (name: string, type: 'groceries' | 'todo' | 'bucketlist') => Promise<void>; 
+  addModule: (name: string, type: 'groceries' | 'todo' | 'bucketlist') => Promise<void>;
   addItemToModule: (moduleId: string, text: string, timeframe?: string) => Promise<void>;
   toggleItemComplete: (moduleId: string, itemId: string) => Promise<void>;
   clearCompletedItems: (moduleId: string) => Promise<void>;
@@ -38,29 +37,47 @@ const AppStateContext = createContext<{
 });
 
 export function AppStateProvider({ children }: { children: React.ReactNode }) {
-  const [modules, setModules] = useState<Module[]>([]);
+  const [modules, setModules] = useState<AppModule[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   // Load modules on component mount
   useEffect(() => {
-    refreshModules();
+    const initializeAndLoad = async () => {
+      try {
+        await initDb();
+        await refreshModules();
+      } catch (e) {
+        console.error("Failed to initialize database or load modules:", e);
+        setError("Failed to initialize database or load modules.\nContact your boyfriend :(");
+      }
+    };
+    initializeAndLoad();
   }, []);
 
   const refreshModules = async () => {
     try {
       setLoading(true);
       setError(null);
-      const modulesData = await modulesApi.getAll();
-      // Ensure each module has an items array
-      const modulesWithItems = modulesData.map((module: any) => ({
-        ...module,
-        items: module.items || []
-      }));
-      setModules(modulesWithItems);
+      const modulesData = await localDb.modules.getAll();
+      
+      // Convert to AppModule format and load items for each module
+      const appModules: AppModule[] = await Promise.all(
+        modulesData.map(async (module) => {
+          const items = await localDb.items.getByModule(module.id);
+          return {
+            ...module,
+            items,
+            itemCount: items.length,
+            completedCount: items.filter(item => item.completed).length,
+          };
+        })
+      );
+      
+      setModules(appModules);
     } catch (err) {
       console.error('Failed to load list modules:', err);
-      setError('Failed to load modules. Please check if the backend server is running. \n(Contact your boyfriend)');
+      setError('Failed to load modules.\nContact your boyfriend :(');
     } finally {
       setLoading(false);
     }
@@ -69,8 +86,14 @@ export function AppStateProvider({ children }: { children: React.ReactNode }) {
   const addModule = async (name: string, type: 'groceries' | 'todo' | 'bucketlist') => {
     try {
       setError(null);
-      const newModule = await modulesApi.create(name, type);
-      setModules(prevModules => [...prevModules, newModule]);
+      const newModule = await localDb.modules.create(name, type);
+      const appModule: AppModule = {
+        ...newModule,
+        items: [],
+        itemCount: 0,
+        completedCount: 0,
+      };
+      setModules(prevModules => [...prevModules, appModule]);
     } catch (err) {
       console.error('Failed to create module:', err);
       setError('Failed to create module. Please try again.');
@@ -81,12 +104,16 @@ export function AppStateProvider({ children }: { children: React.ReactNode }) {
   const addItemToModule = async (moduleId: string, text: string, timeframe?: string) => {
     try {
       setError(null);
-      const newItem = await itemsApi.create(moduleId, text, timeframe);
+      const newItem = await localDb.items.create(moduleId, text, timeframe);
       
       setModules(prevModules =>
         prevModules.map(module =>
           module.id === moduleId
-            ? { ...module, items: [...module.items, newItem] }
+            ? { 
+                ...module, 
+                items: [...module.items, newItem], 
+                itemCount: module.itemCount + 1 
+              }
             : module
         )
       );
@@ -100,22 +127,28 @@ export function AppStateProvider({ children }: { children: React.ReactNode }) {
   const toggleItemComplete = async (moduleId: string, itemId: string) => {
     try {
       setError(null);
-      const result = await itemsApi.toggle(itemId);
-      
-      setModules(prevModules =>
-        prevModules.map(module =>
-          module.id === moduleId
-            ? { 
-                ...module, 
-                items: module.items.map(item => 
-                  item.id === itemId 
-                    ? { ...item, completed: result.completed }
-                    : item
-                ) 
-              }
-            : module
-        )
-      );
+      const currentItem = await localDb.items.getById(itemId);
+      if (currentItem) {
+        const updatedItem = await localDb.items.update(itemId, { completed: !currentItem.completed });
+        
+        setModules(prevModules =>
+          prevModules.map(module =>
+            module.id === moduleId
+              ? { 
+                  ...module, 
+                  items: module.items.map(item => 
+                    item.id === itemId 
+                      ? { ...item, completed: updatedItem?.completed || item.completed }
+                      : item
+                  ),
+                  completedCount: module.items.filter(item => 
+                    item.id === itemId ? updatedItem?.completed || item.completed : item.completed
+                  ).length
+                }
+              : module
+          )
+        );
+      }
     } catch (err) {
       console.error('Failed to toggle item:', err);
       setError('Failed to update item. Please try again.');
@@ -126,15 +159,26 @@ export function AppStateProvider({ children }: { children: React.ReactNode }) {
   const clearCompletedItems = async (moduleId: string) => {
     try {
       setError(null);
-      await itemsApi.deleteCompleted(moduleId);
-      
-      setModules(prevModules =>
-        prevModules.map(module =>
-          module.id === moduleId
-            ? { ...module, items: module.items.filter(item => !item.completed) }
-            : module
-        )
-      );
+      const module = modules.find(m => m.id === moduleId);
+      if (module) {
+        // Delete completed items one by one
+        for (const item of module.items.filter(item => item.completed)) {
+          await localDb.items.delete(item.id);
+        }
+        
+        setModules(prevModules =>
+          prevModules.map(module =>
+            module.id === moduleId
+              ? { 
+                  ...module, 
+                  items: module.items.filter(item => !item.completed), 
+                  itemCount: module.items.filter(item => !item.completed).length,
+                  completedCount: 0
+                }
+              : module
+          )
+        );
+      }
     } catch (err) {
       console.error('Failed to clear completed items:', err);
       setError('Failed to clear completed items. Please try again.');
@@ -145,7 +189,7 @@ export function AppStateProvider({ children }: { children: React.ReactNode }) {
   const deleteModule = async (moduleId: string) => {
     try {
       setError(null);
-      await modulesApi.delete(moduleId);
+      await localDb.modules.delete(moduleId);
       setModules(prevModules => prevModules.filter(module => module.id !== moduleId));
     } catch (err) {
       console.error('Failed to delete module:', err);
@@ -157,12 +201,13 @@ export function AppStateProvider({ children }: { children: React.ReactNode }) {
   const editModule = async (moduleId: string, newName: string, newDate?: string) => {
     try {
       setError(null);
-      await modulesApi.update(moduleId, { name: newName, createdAt: newDate });
+      const creationDate = newDate || new Date().toISOString();
+      await localDb.modules.update(moduleId, newName, creationDate);
       
       setModules(prevModules =>
         prevModules.map(module =>
           module.id === moduleId
-            ? { ...module, name: newName, ...(newDate && { createdAt: newDate }) }
+            ? { ...module, name: newName }
             : module
         )
       );
@@ -176,12 +221,12 @@ export function AppStateProvider({ children }: { children: React.ReactNode }) {
   const deleteAllItems = async (moduleId: string) => {
     try {
       setError(null);
-      await itemsApi.deleteAll(moduleId);
+      await localDb.items.deleteByModule(moduleId);
       
       setModules(prevModules =>
         prevModules.map(module =>
           module.id === moduleId
-            ? { ...module, items: [] }
+            ? { ...module, items: [], itemCount: 0, completedCount: 0 }
             : module
         )
       );

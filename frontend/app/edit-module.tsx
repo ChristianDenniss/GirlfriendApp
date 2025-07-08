@@ -1,4 +1,3 @@
-
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { StyleSheet, TextInput, Pressable } from 'react-native';
@@ -24,7 +23,7 @@ export default function EditModuleScreen() {
 
   const handleSave = () => {
     if (module && name.trim()) {
-      editModule(module.id, name.trim(), creationDate);
+      editModule(module.id, name.trim(), String(creationDate));
       router.back();
     }
   };
@@ -53,7 +52,7 @@ export default function EditModuleScreen() {
         style={styles.input}
         placeholder="YYYY-MM-DD"
         placeholderTextColor="#888"
-        value={creationDate}
+        value={String(creationDate)}
         onChangeText={setCreationDate}
       />
       <Pressable onPress={handleSave} style={styles.saveButton}>

@@ -1,5 +1,5 @@
 import { ThemedText } from '@/components/ThemedText';
-import { StyleSheet, Pressable, Platform, Modal, View } from 'react-native';
+import { StyleSheet, Pressable, Platform, Modal } from 'react-native';
 import Animated, { useAnimatedStyle, useSharedValue, withTiming, withDelay } from 'react-native-reanimated';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'expo-router';
@@ -59,7 +59,7 @@ export function ModuleCard({ module, index, shouldAnimate }: { module: { id: str
       opacity.value = 0;
       translateY.value = 20;
     }
-  }, [shouldAnimate, index]);
+  }, [shouldAnimate, index, opacity, translateY]);
 
   const animatedStyle = useAnimatedStyle(() => {
     return {
@@ -90,8 +90,8 @@ export function ModuleCard({ module, index, shouldAnimate }: { module: { id: str
       <Animated.View style={[styles.card, animatedStyle]}>
         <ThemedView style={styles.innerCardContent}>
           <ThemedView style={styles.textContainer}>
-            <ThemedText type="subtitle">{module.name}</ThemedText>
-            <ThemedText type="default" style={styles.date}>Created: {module.createdAt}</ThemedText>
+            <ThemedText type="subtitle" style={styles.titleCenter}>{module.name}</ThemedText>
+            <ThemedText type="default" style={[styles.date, styles.titleCenter]}>Created: {new Date(module.createdAt).toLocaleDateString(undefined, { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' })}</ThemedText>
           </ThemedView>
           <ThemedView style={styles.actionsContainer}>
             <Pressable onPress={handleEdit} style={styles.actionButton}>
@@ -143,8 +143,13 @@ const styles = StyleSheet.create({
     
   },
   textContainer: {
-    flexShrink: 1,
+    flex: 1,
+    alignItems: 'center',
     marginRight: 10,
+  },
+  titleCenter: {
+    textAlign: 'center',
+    width: '100%',
   },
   date: {
     marginTop: 8,
