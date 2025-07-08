@@ -55,6 +55,7 @@ export const localDb = {
             id: row.id,
             name: row.name,
             type: row.type as 'todo' | 'groceries' | 'bucketlist',
+            icon: row.icon,
             createdAt: new Date(row.createdAt),
           }));
         });
@@ -68,6 +69,7 @@ export const localDb = {
               id: row.id,
               name: row.name,
               type: row.type as 'todo' | 'groceries' | 'bucketlist',
+              icon: row.icon,
               createdAt: new Date(row.createdAt),
             };
           }
@@ -75,30 +77,32 @@ export const localDb = {
         });
     },
 
-    create: (name: string, type: string): Promise<Module> => {
+    create: (name: string, type: string, icon?: string): Promise<Module> => {
       const newModule: Module = {
         id: Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15),
         name,
         type: type as 'todo' | 'groceries' | 'bucketlist',
+        icon: icon || 'list',
         createdAt: new Date(),
       };
       
       return db.runAsync(
-        `INSERT INTO modules (id, name, type, createdAt, updatedAt) VALUES (?, ?, ?, ?, ?);`,
+        `INSERT INTO modules (id, name, type, icon, createdAt, updatedAt) VALUES (?, ?, ?, ?, ?, ?);`,
         [
           newModule.id,
           newModule.name,
           newModule.type,
+          newModule.icon || null,
           newModule.createdAt.toISOString(),
           newModule.createdAt.toISOString(),
         ]
       ).then(() => newModule);
     },
 
-    update: (id: string, name: string, createdAt: string): Promise<Module | undefined> => {
+    update: (id: string, name: string, createdAt: string, icon?: string): Promise<Module | undefined> => {
       return db.runAsync(
-        `UPDATE modules SET name = ?, updatedAt = ? WHERE id = ?;`,
-        [name, new Date().toISOString(), id]
+        `UPDATE modules SET name = ?, icon = ?, updatedAt = ? WHERE id = ?;`,
+        [name, icon || null, new Date().toISOString(), id]
       ).then(() => localDb.modules.getById(id));
     },
 

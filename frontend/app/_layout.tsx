@@ -2,6 +2,7 @@ import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { AppStateProvider } from '@/state/AppState';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 export default function RootLayout() {
   const [loaded] = useFonts({
@@ -14,19 +15,21 @@ export default function RootLayout() {
   }
 
   return (
-    <AppStateProvider>
-      <Stack
-        screenOptions={{
-          contentStyle: { backgroundColor: 'transparent' },
-        }}
-      >
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="create-module" options={{ title: 'Create New List', headerStyle: { backgroundColor: '#4B0082' }, headerTintColor: '#FFFFFF' }} />
-        <Stack.Screen name="module-view" options={{ title: 'List Details', headerStyle: { backgroundColor: '#4B0082' }, headerTintColor: '#FFFFFF' }} />
-        <Stack.Screen name="edit-module" options={{ title: 'Edit List', headerStyle: { backgroundColor: '#4B0082' }, headerTintColor: '#FFFFFF' }} />
-        <Stack.Screen name="+not-found" />
-      </Stack>
-      <StatusBar style="auto" />
-    </AppStateProvider>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <AppStateProvider>
+        <Stack
+          screenOptions={{
+            contentStyle: { backgroundColor: 'transparent' },
+          }}
+        >
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          <Stack.Screen name="create-module" options={{ title: 'Create New List', headerStyle: { backgroundColor: '#4B0082' }, headerTintColor: '#FFFFFF' }} />
+          <Stack.Screen name="module-view" options={{ title: 'List Details', headerStyle: { backgroundColor: '#4B0082' }, headerTintColor: '#FFFFFF' }} />
+          <Stack.Screen name="edit-module" options={{ title: 'Edit List', headerStyle: { backgroundColor: '#4B0082' }, headerTintColor: '#FFFFFF' }} />
+          <Stack.Screen name="+not-found" />
+        </Stack>
+        <StatusBar style="auto" />
+      </AppStateProvider>
+    </GestureHandlerRootView>
   );
 }

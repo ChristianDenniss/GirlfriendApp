@@ -14,13 +14,14 @@ const AppStateContext = createContext<{
   modules: AppModule[]; 
   loading: boolean;
   error: string | null;
-  addModule: (name: string, type: 'groceries' | 'todo' | 'bucketlist') => Promise<void>;
+  addModule: (name: string, type: 'groceries' | 'todo' | 'bucketlist', icon?: string) => Promise<void>;
   addItemToModule: (moduleId: string, text: string, timeframe?: string) => Promise<void>;
   toggleItemComplete: (moduleId: string, itemId: string) => Promise<void>;
   clearCompletedItems: (moduleId: string) => Promise<void>;
   deleteModule: (moduleId: string) => Promise<void>;
-  editModule: (moduleId: string, newName: string, newDate?: string) => Promise<void>;
+  editModule: (moduleId: string, newName: string, newDate?: string, icon?: string) => Promise<void>;
   deleteAllItems: (moduleId: string) => Promise<void>;
+  deleteItem: (moduleId: string, itemId: string) => Promise<void>;
   refreshModules: () => Promise<void>;
 }>({ 
   modules: [], 
@@ -33,6 +34,7 @@ const AppStateContext = createContext<{
   deleteModule: async () => {}, 
   editModule: async () => {}, 
   deleteAllItems: async () => {},
+  deleteItem: async () => {},
   refreshModules: async () => {},
 });
 
@@ -83,10 +85,10 @@ export function AppStateProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const addModule = async (name: string, type: 'groceries' | 'todo' | 'bucketlist') => {
+  const addModule = async (name: string, type: 'groceries' | 'todo' | 'bucketlist', icon?: string) => {
     try {
       setError(null);
-      const newModule = await localDb.modules.create(name, type);
+      const newModule = await localDb.modules.create(name, type, icon);
       const appModule: AppModule = {
         ...newModule,
         items: [],
@@ -198,16 +200,15 @@ export function AppStateProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const editModule = async (moduleId: string, newName: string, newDate?: string) => {
+  const editModule = async (moduleId: string, newName: string, newDate?: string, icon?: string) => {
     try {
       setError(null);
       const creationDate = newDate || new Date().toISOString();
-      await localDb.modules.update(moduleId, newName, creationDate);
-      
+      await localDb.modules.update(moduleId, newName, creationDate, icon);
       setModules(prevModules =>
         prevModules.map(module =>
           module.id === moduleId
-            ? { ...module, name: newName }
+            ? { ...module, name: newName, icon }
             : module
         )
       );
@@ -237,6 +238,32 @@ export function AppStateProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  const deleteItem = async (moduleId: string, itemId: string) => {
+    try {
+      setError(null);
+      await localDb.items.delete(itemId);
+      
+      setModules(prevModules =>
+        prevModules.map(module =>
+          module.id === moduleId
+            ? {
+                ...module,
+                items: module.items.filter(item => item.id !== itemId),
+                itemCount: module.itemCount - 1,
+                completedCount: module.items.find(item => item.id === itemId)?.completed 
+                  ? (module.completedCount || 0) - 1 
+                  : module.completedCount || 0
+              }
+            : module
+        )
+      );
+    } catch (err) {
+      console.error('Failed to delete item:', err);
+      setError('Failed to delete item. Please try again.');
+      throw err;
+    }
+  };
+
   return (
     <AppStateContext.Provider value={{ 
       modules, 
@@ -249,6 +276,7 @@ export function AppStateProvider({ children }: { children: React.ReactNode }) {
       deleteModule, 
       editModule, 
       deleteAllItems,
+      deleteItem,
       refreshModules,
     }}>
       {children}

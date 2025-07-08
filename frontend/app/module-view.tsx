@@ -9,7 +9,7 @@ import { MaterialIcons } from '@expo/vector-icons';
 
 export default function ModuleViewScreen() {
   const { id } = useLocalSearchParams();
-  const { modules, addItemToModule, toggleItemComplete, clearCompletedItems, deleteAllItems } = useAppState();
+  const { modules, addItemToModule, toggleItemComplete, clearCompletedItems, deleteAllItems, deleteItem } = useAppState();
   const module = modules.find(m => m.id === id);
   
   // Ensure module has items array
@@ -46,6 +46,10 @@ export default function ModuleViewScreen() {
 
   const handleToggleItem = async (itemId: string) => {
     await toggleItemComplete(moduleWithItems.id, itemId);
+  };
+
+  const handleDeleteItem = async (itemId: string) => {
+    await deleteItem(moduleWithItems.id, itemId);
   };
 
   const handleClearCompleted = () => {
@@ -156,14 +160,31 @@ export default function ModuleViewScreen() {
           keyboardVerticalOffset={Platform.OS === 'ios' ? 100 : 120}
         >
         <ThemedText type="title" style={styles.title}>{moduleWithItems.name}</ThemedText>
-        <FlatList
-          data={moduleWithItems.items}
-          renderItem={({ item }) => (
-            <AnimatedListItem item={{ ...item, text: item.text }} onToggle={handleToggleItem} moduleType={moduleWithItems.type} />
-          )}
-          keyExtractor={(item) => item.id}
-          contentContainerStyle={styles.list}
-        />
+        {moduleWithItems.items.length === 0 ? (
+          <View style={[styles.list, styles.emptyStateContainer]}>
+            <MaterialIcons name="auto-awesome" size={48} color="#66BB6A" />
+            <ThemedText type="subtitle" style={{ marginTop: 12, color: '#888' }}>
+              No items yet!
+            </ThemedText>
+            <ThemedText style={{ color: '#888' }}>
+              Add your first item to get started Queen.
+            </ThemedText>
+          </View>
+        ) : (
+          <FlatList
+            data={moduleWithItems.items}
+            renderItem={({ item }) => (
+              <AnimatedListItem 
+                item={{ ...item, text: item.text }} 
+                onToggle={handleToggleItem} 
+                onDelete={handleDeleteItem}
+                moduleType={moduleWithItems.type} 
+              />
+            )}
+            keyExtractor={(item) => item.id}
+            contentContainerStyle={styles.list}
+          />
+        )}
         
         {/* Auto-complete suggestions for groceries */}
         {showSuggestions && moduleWithItems.type === 'groceries' && (
@@ -389,5 +410,10 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 12,
     fontFamily: 'FredokaRegular',
+  },
+  emptyStateContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    flex: 1,
   },
 });

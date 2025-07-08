@@ -42,7 +42,7 @@ export function ConfirmModal({ visible, title, message, confirmText, cancelText,
   );
 }
 
-export function ModuleCard({ module, index, shouldAnimate }: { module: { id: string; name: string; createdAt: string }, index: number, shouldAnimate: boolean }) {
+export function ModuleCard({ module, index, shouldAnimate }: { module: { id: string; name: string; icon?: string; createdAt: string }, index: number, shouldAnimate: boolean }) {
   const opacity = useSharedValue(0);
   const translateY = useSharedValue(20);
   const router = useRouter();
@@ -89,6 +89,13 @@ export function ModuleCard({ module, index, shouldAnimate }: { module: { id: str
     <Pressable onPress={() => router.push({ pathname: '/module-view', params: { id: module.id } })}>
       <Animated.View style={[styles.card, animatedStyle]}>
         <ThemedView style={styles.innerCardContent}>
+          <ThemedView style={styles.iconContainer}>
+            <MaterialIcons 
+              name={module.icon as any || 'list'} 
+              size={24} 
+              color="#66BB6A" 
+            />
+          </ThemedView>
           <ThemedView style={styles.textContainer}>
             <ThemedText type="subtitle" style={styles.titleCenter}>{module.name}</ThemedText>
             <ThemedText type="default" style={[styles.date, styles.titleCenter]}>Created: {new Date(module.createdAt).toLocaleDateString(undefined, { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' })}</ThemedText>
@@ -141,6 +148,11 @@ const styles = StyleSheet.create({
       },
     }),
     
+  },
+  iconContainer: {
+    marginRight: 12,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   textContainer: {
     flex: 1,
