@@ -144,119 +144,121 @@ export default function ModuleViewScreen() {
   };
 
   return (
-    <ThemedView style={styles.container}>
-      <Pressable 
-        style={{ flex: 1 }}
-        onPress={() => {
-          // Allow swipe down to dismiss keyboard
-          Keyboard.dismiss();
-          setShowSuggestions(false);
-          setSuggestions([]);
-        }}
+    <>
+      <KeyboardAvoidingView 
+        style={{ flex: 1, backgroundColor: '#4B0082' }} 
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 85 : 120}
       >
-        <KeyboardAvoidingView 
-          style={{ flex: 1 }} 
-          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-          keyboardVerticalOffset={Platform.OS === 'ios' ? 100 : 120}
-        >
-        <ThemedText type="title" style={styles.title}>{moduleWithItems.name}</ThemedText>
-        {moduleWithItems.items.length === 0 ? (
-          <View style={[styles.list, styles.emptyStateContainer]}>
-            <MaterialIcons name="auto-awesome" size={48} color="#66BB6A" />
-            <ThemedText type="subtitle" style={{ marginTop: 12, color: '#888' }}>
-              No items yet!
-            </ThemedText>
-            <ThemedText style={{ color: '#888' }}>
-              Add your first item to get started Queen.
-            </ThemedText>
-          </View>
-        ) : (
-          <FlatList
-            data={moduleWithItems.items}
-            renderItem={({ item }) => (
-              <AnimatedListItem 
-                item={{ ...item, text: item.text }} 
-                onToggle={handleToggleItem} 
-                onDelete={handleDeleteItem}
-                moduleType={moduleWithItems.type} 
-              />
-            )}
-            keyExtractor={(item) => item.id}
-            contentContainerStyle={styles.list}
-          />
-        )}
-        
-        {/* Auto-complete suggestions for groceries */}
-        {showSuggestions && moduleWithItems.type === 'groceries' && (
+        <ThemedView style={styles.container}>
           <Pressable 
-            style={styles.suggestionsContainer} 
-            onPress={(e) => {
-              e.stopPropagation(); // Prevent event from bubbling to parent
-            }}
-          >
-            <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-              {suggestions.map((suggestion, index) => (
-                <Pressable
-                  key={index}
-                  style={styles.suggestionChip}
-                  onPress={(e) => {
-                    e.stopPropagation(); // Prevent event from bubbling to parent
-                    handleSuggestionPress(suggestion);
-                  }}
-                >
-                  <ThemedText style={styles.suggestionText}>{suggestion}</ThemedText>
-                </Pressable>
-              ))}
-            </ScrollView>
-          </Pressable>
-        )}
-        
-        <ThemedView style={styles.inputContainer}>
-          <TextInput
-            style={styles.input}
-            placeholder="Add new item"
-            placeholderTextColor="#888"
-            value={newItemText}
-            onChangeText={setNewItemText}
-            blurOnSubmit={false}
-            returnKeyType="done"
-            onSubmitEditing={() => {
+            style={{ flex: 1 }}
+            onPress={() => {
+              // Allow swipe down to dismiss keyboard
               Keyboard.dismiss();
               setShowSuggestions(false);
               setSuggestions([]);
             }}
-            onBlur={() => {
-              // Don't hide suggestions when input loses focus
-            }}
-            onFocus={() => {
-              // Don't need to re-show suggestions since they stay visible
-            }}
-          />
-          {moduleWithItems.type === 'bucketlist' && (
-            <TextInput
-              style={styles.input}
-              placeholder="Timeframe (e.g., 'Next year')"
-              placeholderTextColor="#888"
-              value={timeframeText}
-              onChangeText={setTimeframeText}
-            />
-          )}
-          <Pressable onPress={handleAddItem} style={styles.addButton}>
-            <MaterialIcons name="add" size={24} color="white" />
+          >
+            <ThemedText type="title" style={styles.title}>{moduleWithItems.name}</ThemedText>
+            {moduleWithItems.items.length === 0 ? (
+              <View style={[styles.list, styles.emptyStateContainer]}>
+                <MaterialIcons name="auto-awesome" size={48} color="#66BB6A" />
+                <ThemedText type="subtitle" style={{ marginTop: 12, color: '#888' }}>
+                  No items yet!
+                </ThemedText>
+                <ThemedText style={{ color: '#888' }}>
+                  Add your first item to get started Queen.
+                </ThemedText>
+              </View>
+            ) : (
+              <FlatList
+                data={moduleWithItems.items}
+                renderItem={({ item }) => (
+                  <AnimatedListItem 
+                    item={{ ...item, text: item.text }} 
+                    onToggle={handleToggleItem} 
+                    onDelete={handleDeleteItem}
+                    moduleType={moduleWithItems.type} 
+                  />
+                )}
+                keyExtractor={(item) => item.id}
+                contentContainerStyle={styles.list}
+              />
+            )}
+            
+            {/* Auto-complete suggestions for groceries */}
+            {showSuggestions && moduleWithItems.type === 'groceries' && (
+              <Pressable 
+                style={styles.suggestionsContainer} 
+                onPress={(e) => {
+                  e.stopPropagation(); // Prevent event from bubbling to parent
+                }}
+              >
+                <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                  {suggestions.map((suggestion, index) => (
+                    <Pressable
+                      key={index}
+                      style={styles.suggestionChip}
+                      onPress={(e) => {
+                        e.stopPropagation(); // Prevent event from bubbling to parent
+                        handleSuggestionPress(suggestion);
+                      }}
+                    >
+                      <ThemedText style={styles.suggestionText}>{suggestion}</ThemedText>
+                    </Pressable>
+                  ))}
+                </ScrollView>
+              </Pressable>
+            )}
+            
+            <ThemedView style={styles.inputContainer}>
+              <TextInput
+                style={styles.input}
+                placeholder="Add new item"
+                placeholderTextColor="#888"
+                value={newItemText}
+                onChangeText={setNewItemText}
+                blurOnSubmit={false}
+                returnKeyType="done"
+                onSubmitEditing={() => {
+                  Keyboard.dismiss();
+                  setShowSuggestions(false);
+                  setSuggestions([]);
+                }}
+                onBlur={() => {
+                  // Don't hide suggestions when input loses focus
+                }}
+                onFocus={() => {
+                  // Don't need to re-show suggestions since they stay visible
+                }}
+              />
+              {moduleWithItems.type === 'bucketlist' && (
+                <TextInput
+                  style={styles.input}
+                  placeholder="Timeframe (e.g., 'Next year')"
+                  placeholderTextColor="#888"
+                  value={timeframeText}
+                  onChangeText={setTimeframeText}
+                />
+              )}
+              <Pressable onPress={handleAddItem} style={styles.addButton}>
+                <MaterialIcons name="add" size={24} color="white" />
+              </Pressable>
+            </ThemedView>
+            <View style={styles.bottomButtonsContainer}>
+              {moduleWithItems.type !== 'bucketlist' && (
+                <Pressable onPress={handleClearCompleted} style={styles.clearButton}>
+                  <ThemedText style={styles.clearButtonText}>Clear Finished Items</ThemedText>
+                </Pressable>
+              )}
+              <Pressable onPress={handleDeleteAll} style={styles.deleteAllButton}>
+                <ThemedText style={styles.deleteAllButtonText}>Delete All</ThemedText>
+              </Pressable>
+            </View>
           </Pressable>
         </ThemedView>
-        <View style={styles.bottomButtonsContainer}>
-          {moduleWithItems.type !== 'bucketlist' && (
-            <Pressable onPress={handleClearCompleted} style={styles.clearButton}>
-              <ThemedText style={styles.clearButtonText}>Clear Finished Items</ThemedText>
-            </Pressable>
-          )}
-          <Pressable onPress={handleDeleteAll} style={styles.deleteAllButton}>
-            <ThemedText style={styles.deleteAllButtonText}>Delete All</ThemedText>
-          </Pressable>
-        </View>
       </KeyboardAvoidingView>
-      </Pressable>
 
       <Modal
         animationType="slide"
@@ -279,7 +281,7 @@ export default function ModuleViewScreen() {
           </ThemedView>
         </ThemedView>
       </Modal>
-    </ThemedView>
+    </>
   );
 }
 
@@ -287,6 +289,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
+    backgroundColor: '#4B0082',
   },
   title: {
     marginBottom: 16,
@@ -392,7 +395,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   suggestionsContainer: {
-    marginTop: 4,
+    marginTop: 0,
     marginBottom: 2,
     paddingHorizontal: 4,
   },
