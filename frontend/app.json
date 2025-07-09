@@ -2,7 +2,7 @@
   "expo": {
     "name": "maddyApp",
     "slug": "maddyApp",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "maddyapp",
@@ -10,7 +10,7 @@
     "newArchEnabled": true,
     "ios": {
       "bundleIdentifier": "com.christiandennis.maddyapp",
-      "buildNumber": "5",
+      "buildNumber": "6",
       "supportsTablet": false,
       "infoPlist": {
         "NSAppTransportSecurity": {
