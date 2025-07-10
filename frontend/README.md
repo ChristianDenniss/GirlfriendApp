@@ -1,50 +1,132 @@
-# Welcome to your Expo app 👋
+# MaddyApp 📱
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+A beautiful and intuitive list management app built with React Native and Expo. MaddyApp helps you organize your life with different types of lists including groceries, to-do items, and bucket lists.
 
-## Get started
+## Features ✨
 
-1. Install dependencies
+- **📝 Multiple List Types**: Create and manage groceries, to-do lists, and bucket lists
+- **🎨 Beautiful UI**: Clean, modern interface with consistent purple theme
+- **🔄 Real-time Updates**: Instant synchronization across all your lists
+- **📱 Cross-platform**: Works on iOS, Android, and web
+- **🎯 Intuitive Navigation**: Easy-to-use tab-based navigation
+- **💾 Local Storage**: Your data stays on your device
+- **🎨 Custom Icons**: Choose from a variety of icons for your lists
 
+## Screenshots 📸
+
+- **Home Screen**: Interactive pixel art interface with animated characters
+- **List Management**: Create, edit, and organize your lists
+- **Item Management**: Add, complete, and delete items within lists
+- **Consistent Design**: Purple theme throughout the app
+
+## Getting Started 🚀
+
+### Prerequisites
+
+- Node.js (v16 or higher)
+- npm or yarn
+- Expo CLI
+- iOS Simulator (for iOS development) or Android Emulator (for Android development)
+
+### Installation
+
+1. **Clone the repository**
+   ```bash
+   git clone <your-repo-url>
+   cd maddyApp/frontend
+   ```
+
+2. **Install dependencies**
    ```bash
    npm install
    ```
 
-2. Start the app
-
+3. **Start the development server**
    ```bash
-   npx expo start
+   npm start
    ```
 
-In the output, you'll find options to open the app in a
+4. **Run on your preferred platform**
+   ```bash
+   # iOS
+   npm run ios
+   
+   # Android
+   npm run android
+   
+   # Web
+   npm run web
+   ```
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+## Project Structure 📁
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
-
-```bash
-npm run reset-project
+```
+frontend/
+├── app/                    # Main app screens
+│   ├── (tabs)/            # Tab navigation screens
+│   │   ├── home.tsx       # Home screen with pixel art
+│   │   ├── groceries.tsx  # Groceries list
+│   │   ├── todo.tsx       # To-do lists
+│   │   └── bucketlist.tsx # Bucket lists
+│   ├── create-module.tsx  # Create new list screen
+│   ├── edit-module.tsx    # Edit list screen
+│   └── module-view.tsx    # List details screen
+├── components/            # Reusable components
+│   ├── AnimatedListItem.tsx
+│   ├── ModuleCard.tsx
+│   ├── ModuleListScreen.tsx
+│   └── ThemedView.tsx
+├── constants/             # App constants
+│   └── Colors.ts         # Color scheme
+├── hooks/                # Custom React hooks
+├── services/             # API and storage services
+├── state/                # App state management
+└── types/                # TypeScript type definitions
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+## Tech Stack 🛠️
 
-## Learn more
+- **Frontend**: React Native with Expo
+- **Navigation**: Expo Router with file-based routing
+- **State Management**: React Context API
+- **Storage**: Local storage with Expo SQLite
+- **Styling**: React Native StyleSheet
+- **Icons**: Expo Vector Icons (MaterialIcons)
+- **Animations**: React Native Reanimated
 
-To learn more about developing your project with Expo, look at the following resources:
+## Development 🧑‍💻
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+### Available Scripts
 
-## Join the community
+- `npm start` - Start the Expo development server
+- `npm run ios` - Run on iOS simulator
+- `npm run android` - Run on Android emulator
+- `npm run web` - Run on web browser
+- `npm run lint` - Run ESLint
 
-Join our community of developers creating universal apps.
+### Key Features Implementation
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+- **Theme Consistency**: All backgrounds use hardcoded purple (`#4B0082`) for consistent appearance across devices
+- **File-based Routing**: Uses Expo Router for intuitive navigation
+- **TypeScript**: Full TypeScript support for better development experience
+- **Responsive Design**: Works seamlessly across different screen sizes
+
+## Contributing 🤝
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+## License 📄
+
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+## Support 💬
+
+If you have any questions or need help, please open an issue on GitHub or contact the development team.
+
+---
+
+Made with ❤️ using React Native and Expo
