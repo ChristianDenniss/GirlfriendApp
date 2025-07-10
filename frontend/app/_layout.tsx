@@ -28,7 +28,7 @@ export default function RootLayout() {
           <Stack.Screen name="edit-module" options={{ title: 'Edit List', headerStyle: { backgroundColor: '#4B0082' }, headerTintColor: '#FFFFFF' }} />
           <Stack.Screen name="+not-found" />
         </Stack>
-        <StatusBar style="auto" />
+        <StatusBar style="light" />
       </AppStateProvider>
     </GestureHandlerRootView>
   );
