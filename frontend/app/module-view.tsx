@@ -146,7 +146,7 @@ export default function ModuleViewScreen() {
   return (
     <>
       <KeyboardAvoidingView 
-        style={{ flex: 1, backgroundColor: '#4B0082' }} 
+        style={{ flex: 1 }} 
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         keyboardVerticalOffset={Platform.OS === 'ios' ? 85 : 120}
       >
@@ -289,7 +289,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
-    backgroundColor: '#4B0082',
+    backgroundColor: '#4B0082', // Hardcoded consistent purple background
   },
   title: {
     marginBottom: 16,

@@ -19,7 +19,7 @@ export default function RootLayout() {
       <AppStateProvider>
         <Stack
           screenOptions={{
-            contentStyle: { backgroundColor: 'transparent' },
+            contentStyle: { backgroundColor: '#4B0082' }, // Hardcoded consistent purple background
           }}
         >
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />

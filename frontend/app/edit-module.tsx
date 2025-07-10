@@ -100,6 +100,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
+    backgroundColor: '#4B0082', // Hardcoded consistent purple background
   },
   title: {
     marginBottom: 20,

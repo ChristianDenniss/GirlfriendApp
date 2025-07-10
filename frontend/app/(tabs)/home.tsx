@@ -454,7 +454,7 @@ const styles = StyleSheet.create({
   absoluteFill: { flex: 1, ...StyleSheet.absoluteFillObject },
   loadingOverlay: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: '#4B0082',
+    backgroundColor: '#4B0082', // Hardcoded consistent purple background
     alignItems: 'center',
     justifyContent: 'center',
     zIndex: 2,

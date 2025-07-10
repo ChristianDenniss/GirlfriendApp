@@ -84,7 +84,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
     borderBottomWidth: 1,
     borderBottomColor: '#eee',
-    backgroundColor: '#4B0082',
+    backgroundColor: '#4B0082', // Hardcoded consistent purple background
     minHeight: 60,
     marginHorizontal: 8,
     marginVertical: 2,
