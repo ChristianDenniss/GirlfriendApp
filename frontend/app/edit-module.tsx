@@ -43,15 +43,15 @@ export default function EditModuleScreen() {
   if (!module) {
     return (
       <ThemedView style={styles.container}>
-        <ThemedText type="title">Module Not Found</ThemedText>
+        <ThemedText type="title" style={{ color: 'white' }}>Module Not Found</ThemedText>
       </ThemedView>
     );
   }
 
   return (
     <ThemedView style={styles.container}>
-      <ThemedText type="title" style={styles.title}>Edit List</ThemedText>
-      <ThemedText type="subtitle" style={styles.subtitle}>Edit List Name</ThemedText>
+              <ThemedText type="title" style={[styles.title, { color: 'white' }]}>Edit List</ThemedText>
+              <ThemedText type="subtitle" style={[styles.subtitle, { color: 'white' }]}>Edit List Name</ThemedText>
       <TextInput
         style={styles.input}
         placeholder="List Name"
@@ -59,7 +59,7 @@ export default function EditModuleScreen() {
         value={name}
         onChangeText={setName}
       />
-      <ThemedText type="subtitle" style={styles.subtitle}>Edit Creation Date</ThemedText>
+              <ThemedText type="subtitle" style={[styles.subtitle, { color: 'white' }]}>Edit Creation Date</ThemedText>
       <TextInput
         style={styles.input}
         placeholder="YYYY-MM-DD"
@@ -67,7 +67,7 @@ export default function EditModuleScreen() {
         value={String(creationDate)}
         onChangeText={setCreationDate}
       />
-      <ThemedText type="subtitle" style={styles.subtitle}>Edit Icon</ThemedText>
+              <ThemedText type="subtitle" style={[styles.subtitle, { color: 'white' }]}>Edit Icon</ThemedText>
       <ScrollView style={styles.iconGrid} showsVerticalScrollIndicator={false}>
         <View style={styles.iconContainer}>
           {availableIcons.map((iconName) => (

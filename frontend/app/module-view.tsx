@@ -26,7 +26,7 @@ export default function ModuleViewScreen() {
   if (!moduleWithItems) {
     return (
       <ThemedView style={styles.container}>
-        <ThemedText type="title">Module Not Found</ThemedText>
+        <ThemedText type="title" style={{ color: 'white' }}>Module Not Found</ThemedText>
       </ThemedView>
     );
   }
@@ -160,7 +160,7 @@ export default function ModuleViewScreen() {
               setSuggestions([]);
             }}
           >
-            <ThemedText type="title" style={styles.title}>{moduleWithItems.name}</ThemedText>
+            <ThemedText type="title" style={[styles.title, { color: 'white' }]}>{moduleWithItems.name}</ThemedText>
             {moduleWithItems.items.length === 0 ? (
               <View style={[styles.list, styles.emptyStateContainer]}>
                 <MaterialIcons name="auto-awesome" size={48} color="#66BB6A" />
@@ -268,7 +268,7 @@ export default function ModuleViewScreen() {
       >
         <ThemedView style={styles.centeredView}>
           <ThemedView style={styles.modalView}>
-            <ThemedText type="subtitle">Confirm Deletion</ThemedText>
+            <ThemedText type="subtitle" style={{ color: '#4B0082' }}>Confirm Deletion</ThemedText>
             <ThemedText style={{ color: '#4B0082' }}>Are you sure you want to delete all items?</ThemedText>
             <ThemedView style={styles.modalButtons}>
               <Pressable style={[styles.button, styles.buttonConfirm]} onPress={confirmDeleteAll}>

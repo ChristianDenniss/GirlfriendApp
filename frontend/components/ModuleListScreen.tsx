@@ -68,7 +68,7 @@ export function ModuleListScreen({ title, type }: { title: string; type: 'grocer
   if (loading && modules.length === 0) {
     return (
       <ThemedView style={styles.container}>
-        <ThemedText type="title" style={styles.title}>{title}</ThemedText>
+        <ThemedText type="title" style={[styles.title, { color: 'white' }]}>{title}</ThemedText>
         <ThemedView style={styles.loadingContainer}>
           <ActivityIndicator size="large" color="#66BB6A" />
           <ThemedText style={styles.loadingText}>Loading modules...</ThemedText>
@@ -81,7 +81,7 @@ export function ModuleListScreen({ title, type }: { title: string; type: 'grocer
   if (error && modules.length === 0) {
     return (
       <ThemedView style={styles.container}>
-        <ThemedText type="title" style={styles.title}>{title}</ThemedText>
+        <ThemedText type="title" style={[styles.title, { color: 'white' }]}>{title}</ThemedText>
         <ThemedView style={styles.errorContainer}>
           <MaterialIcons name="error" size={48} color="#FF69B4" />
           <ThemedText style={styles.errorText}>{error}</ThemedText>
@@ -97,14 +97,14 @@ export function ModuleListScreen({ title, type }: { title: string; type: 'grocer
   if (!shouldAnimate) {
     return (
       <ThemedView style={styles.container}>
-        <ThemedText type="title" style={styles.title}>{title}</ThemedText>
+        <ThemedText type="title" style={[styles.title, { color: 'white' }]}>{title}</ThemedText>
       </ThemedView>
     );
   }
 
   return (
     <ThemedView style={styles.container}>
-      <ThemedText type="title" style={styles.title}>{title}</ThemedText>
+      <ThemedText type="title" style={[styles.title, { color: 'white' }]}>{title}</ThemedText>
       
       {error && (
         <ThemedView style={styles.errorBanner}>

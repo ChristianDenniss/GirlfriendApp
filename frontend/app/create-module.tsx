@@ -50,7 +50,7 @@ export default function CreateModuleScreen() {
 
   return (
     <ThemedView style={styles.container}>
-      <ThemedText type="title">Create a New List</ThemedText>
+              <ThemedText type="title" style={{ color: 'white' }}>Create a New List</ThemedText>
       
       <TextInput
         style={styles.input}
@@ -60,7 +60,7 @@ export default function CreateModuleScreen() {
         onChangeText={setName}
       />
 
-      <ThemedText type="subtitle" style={styles.sectionTitle}>Choose an Icon</ThemedText>
+              <ThemedText type="subtitle" style={[styles.sectionTitle, { color: 'white' }]}>Choose an Icon</ThemedText>
       
       <ScrollView style={styles.iconGrid} showsVerticalScrollIndicator={false}>
         <View style={styles.iconContainer}>

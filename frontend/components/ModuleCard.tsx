@@ -26,7 +26,7 @@ export function ConfirmModal({ visible, title, message, confirmText, cancelText,
     >
       <ThemedView style={styles.centeredView}>
         <ThemedView style={styles.modalView}>
-          <ThemedText type="subtitle">{title}</ThemedText>
+          <ThemedText type="subtitle" style={{ color: '#4B0082' }}>{title}</ThemedText>
           <ThemedText style={{ color: '#4B0082' }}>{message}</ThemedText>
           <ThemedView style={styles.modalButtons}>
             <Pressable style={[styles.button, styles.buttonConfirm]} onPress={onConfirm}>
@@ -97,7 +97,7 @@ export function ModuleCard({ module, index, shouldAnimate }: { module: { id: str
             />
           </ThemedView>
           <ThemedView style={styles.textContainer}>
-            <ThemedText type="subtitle" style={styles.titleCenter}>{module.name}</ThemedText>
+            <ThemedText type="subtitle" style={[styles.titleCenter, { color: 'white' }]}>{module.name}</ThemedText>
             <ThemedText type="default" style={[styles.date, styles.titleCenter]}>Created: {new Date(module.createdAt).toLocaleDateString(undefined, { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' })}</ThemedText>
           </ThemedView>
           <ThemedView style={styles.actionsContainer}>
